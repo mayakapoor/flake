@@ -1,6 +1,23 @@
 [build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "flake"
-authors = [{name = "mayakapoor", email = "mkapoor1@uncc.edu"}]
-dynamic = ["version", "description"]
+name = "Flake"
+version = "0.0.1"
+authors = [
+  { name="Maya Kapoor", email="mkapoor1@uncc.edu" },
+]
+description = "Provenance graph generation for machine learning and causality analysis"
+readme = "README.rst"
+license = { file="LICENSE" }
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/mayakapoor/flake"
+#"Bug Tracker" = "https://github.com/pypa/sampleproject/issues"

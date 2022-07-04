@@ -6,7 +6,7 @@ Usage
 Installation
 ------------
 
-To use Lumache, first install it using pip:
+To use Flake, first install it using pip:
 
 .. code-block:: console
 
@@ -20,4 +20,3 @@ Creating graphs
 
 Analyzing output
 ----------------
-

@@ -1,4 +1,4 @@
-Welcome to Lumache's documentation!
+Welcome to Flake's documentation!
 ===================================
 
 **Flake** (/lu'make/) is a library for parsing provenance data and creating graphs for machine learning and causality analysis.

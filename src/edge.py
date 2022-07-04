@@ -1,6 +1,5 @@
 """
 The edge class represents a single relation in the network.
-\param[in] serial the unique CamFlow serial id given to the edge.
 \param[in] type the assigned type to the edge.
 \param[in] src_node the node serial of the source node of the directed edge.
 \param[in] dst_node the node serial of the destination node of the directed edge.

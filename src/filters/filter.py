@@ -4,7 +4,7 @@ import sys
 import time
 
 import flake.flake
-import flake.config as config
+import flake.filter.config as config
 
 class Filter():
     """

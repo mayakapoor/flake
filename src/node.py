@@ -1,7 +1,6 @@
 
 """
 The node class represents a single vertex in the network.
-\param[in] serial the unique CamFlow serial id given to the node.
 \param[in] type the assigned type to the node.
 \param[in] index the node index which will serve to serialize it.
 """

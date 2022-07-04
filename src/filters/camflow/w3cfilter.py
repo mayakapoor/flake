@@ -111,7 +111,7 @@ class W3CFilter(Filter):
     """
     Load the specified graph from file, using the filter to parse the data.
     params: input_path, the full file path to the camflow data.
-    params: G, the cf2g graph object we are loading to
+    params: G, the flake object we are loading to
     """
     def load_data_from_file(self, data, G):
         print("Loading data now...")
