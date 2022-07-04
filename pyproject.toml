@@ -1,0 +1,6 @@
+[build-system]
+
+[project]
+name = "flake"
+authors = [{name = "mayakapoor", email = "mkapoor1@uncc.edu"}]
+dynamic = ["version", "description"]
