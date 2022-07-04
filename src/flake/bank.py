@@ -7,10 +7,8 @@ import sqlite3
 import time
 from termcolor import colored
 
-import flake.queries as queries
-import flake.output as output
-import flake.config as config
-from flake.flake import Flake
+from . import config
+from . import queries
 
 class Bank():
     def __init__(self, filter):
@@ -35,7 +33,6 @@ class Bank():
         db_conn = sqlite3.connect(self.db_file)
         cursor = db_conn.cursor()
         sql = queries.insert_graph(actions)
-        print(sql)
         cursor.execute(sql)
         db_conn.commit()
         cursor.execute(queries.get_last_row_id())
@@ -63,7 +60,7 @@ class Bank():
         print("disconnected with result code "+ str(rc))
         self.client.loop_stop()
 
-    def connect_client_mqtt(self, graph):
+    def connect_mqtt_client(self, graph):
         print("Connecting MQTT subscriber...")
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message

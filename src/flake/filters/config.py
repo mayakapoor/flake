@@ -15,5 +15,5 @@ def initFromConfig(param):
     for section in config.sections():
         if config.has_option(section, param):
             return config[section][param]
-    print("Error initializing " + str(param) + "from config. Parameter not found.")
+    print("Error initializing " + str(param) + " from config. Parameter not found.")
     sys.exit()

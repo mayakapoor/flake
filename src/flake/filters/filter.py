@@ -3,8 +3,7 @@ import os
 import sys
 import time
 
-import flake.flake
-import flake.filter.config as config
+from . import config
 
 class Filter():
     """

@@ -5,11 +5,10 @@ import dgl
 import networkx as nx
 from collections import defaultdict
 
-import flake.config as config
-import flake.queries as queries
-
-from flake.node import Node
-from flake.edge import Edge
+from . import config as cfg
+from . import queries
+from . import node
+from . import edge
 
 """
 Helper function to return a one-hot encoded vector
@@ -153,26 +152,26 @@ class Flake():
 
     def add_node(self, type):
         id = len(self.nodes)
-        self.nodes[id] = Node(type, id)
+        self.nodes[id] = node.Node(type, id)
         self.nodetypes[type].append(id)
         return id
 
     def add_node(self, type, features):
         id = len(self.nodes)
-        self.nodes[id] = Node(type, id)
+        self.nodes[id] = node.Node(type, id)
         self.nodetypes[type].append(id)
         self.nodes[id].add_features(features)
         return id
 
     def add_edge(self, type, src_node, dst_node, jiffies):
         id = len(self.edges)
-        self.edges[id] = Edge(type, self.nodes[src_node], self.nodes[dst_node], jiffies, id)
+        self.edges[id] = edge.Edge(type, self.nodes[src_node], self.nodes[dst_node], jiffies, id)
         self.edgetypes[type].append(id)
         return id
 
     def add_edge(self, type, src_node, dst_node, features, jiffies):
         id = len(self.edges)
-        self.edges[id] = Edge(type, self.nodes[src_node], self.nodes[dst_node], jiffies, id)
+        self.edges[id] = edge.Edge(type, self.nodes[src_node], self.nodes[dst_node], jiffies, id)
         self.edgetypes[type].append(id)
         self.edges[id].add_features(features)
         # add edge schema
@@ -297,7 +296,7 @@ class Flake():
     def to_json(self):
         print("outputting graph to JSON format...")
         output_dict = self.get_graph_dictionary()
-        OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+        OUTPUT_DIR = cfg.initFromConfig('OUTPUT_DIR')
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)
@@ -307,7 +306,7 @@ class Flake():
         print("Graph outputted to " + out + ".")
 
     def to_file(self):
-        OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+        OUTPUT_DIR = cfg.initFromConfig('OUTPUT_DIR')
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)
@@ -330,7 +329,7 @@ class Flake():
 
     def to_pickle(self):
         print("converting graph to pickle...")
-        OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+        OUTPUT_DIR = cfg.initFromConfig('OUTPUT_DIR')
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)
@@ -346,7 +345,7 @@ class Flake():
         for edge in self.get_edges():
             reNG.add_edge(edge.getSrcNode().getType(), edge.getDstNode().getType(), label=edge.getType(), data=edge.getType())
         print("Drawing graph...")
-        OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+        OUTPUT_DIR = cfg.initFromConfig('OUTPUT_DIR')
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)
@@ -359,7 +358,7 @@ class Flake():
     def to_edge_type_dictionary(self):
         print("outputting one-hot encoded edge types to JSON format...")
         types = list(self.edgetypes.keys())
-        OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+        OUTPUT_DIR = cfg.initFromConfig('OUTPUT_DIR')
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)
@@ -372,7 +371,7 @@ class Flake():
     def to_node_type_dictionary(self):
         print("outputting one-hot encoded node types to JSON format...")
         types = list(self.nodetypes.keys())
-        OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+        OUTPUT_DIR = cfg.initFromConfig('OUTPUT_DIR')
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)

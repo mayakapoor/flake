@@ -5,8 +5,8 @@ import dgl
 import networkx as nx
 from collections import defaultdict
 
-import flake.flake
-import flake.config as config
+from . import flake
+from . import config
 
 #######################
 #        helpers      #
