@@ -21,7 +21,7 @@ def one_hot_encode(idx, len):
 """
 This class represents an internal graph of Nodes and Edges
 """
-class Flake():
+class FlurryFlake():
     def __init__(self, id, actions):
         # graph id
         self.id = id

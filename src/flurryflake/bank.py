@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
 import sys
+import os
 import subprocess
 import base64
 import zlib
@@ -9,10 +10,11 @@ from termcolor import colored
 
 from . import config
 from . import queries
+from . import flake
 
-class Bank():
+class FlurryBank():
     def __init__(self, filter):
-        DB_FILE = config.initFromConfig('DB_FILE')
+        DB_FILE = str(os.getcwd() + "/" + str(config.initFromConfig('DB_FILE')))
         if DB_FILE is not None:
             self.db_file = DB_FILE
             self.client = mqtt.Client()
@@ -32,13 +34,14 @@ class Bank():
     def make_flake(self, actions):
         db_conn = sqlite3.connect(self.db_file)
         cursor = db_conn.cursor()
-        sql = queries.insert_graph(actions)
+        action_str = ",".join(actions)
+        sql = queries.insert_graph(action_str)
         cursor.execute(sql)
         db_conn.commit()
         cursor.execute(queries.get_last_row_id())
         id = cursor.fetchall()[0][0]
         cursor.close()
-        return id
+        return flake.FlurryFlake(id, actions)
 
     #def get_flake(self, id):
 
@@ -60,7 +63,7 @@ class Bank():
         print("disconnected with result code "+ str(rc))
         self.client.loop_stop()
 
-    def connect_mqtt_client(self, graph):
+    def connect_client(self, graph):
         print("Connecting MQTT subscriber...")
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
@@ -77,7 +80,7 @@ class Bank():
         self.client.loop_start()
         time.sleep(1)
 
-    def disconnect_mqtt_client(self, graph):
+    def disconnect_client(self, graph):
         print("Stopping MQTT subscriber...")
         self.client.loop_stop()
         db_conn = sqlite3.connect(self.db_file)
