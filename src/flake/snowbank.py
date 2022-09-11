@@ -10,7 +10,7 @@ from termcolor import colored
 from . import config
 from . import queries
 
-class Bank():
+class Snowbank():
     def __init__(self, filter):
         DB_FILE = config.initFromConfig('DB_FILE')
         if DB_FILE is not None:
@@ -29,7 +29,7 @@ class Bank():
             sys.exit()
         self.filter = filter
 
-    def make_flake(self, actions):
+    def generate(self, actions):
         db_conn = sqlite3.connect(self.db_file)
         cursor = db_conn.cursor()
         sql = queries.insert_graph(actions)
@@ -40,17 +40,18 @@ class Bank():
         cursor.close()
         return id
 
-    #def get_flake(self, id):
-
+    def publish(self, msg):
+        for topic in self.pub_topics:
+            self.client.publish(topic, msg)
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code "+str(rc))
-        topic = config.initFromConfig('MQTT_TOPIC')
-        if topic is not None:
+        sub_topics = config.initFromConfig('MQTT_SUBSCRIBE_TOPIC').split()
+        for topic in sub_topics:
             client.subscribe(topic, qos=0)
-        else:
-            print("MQTT topic improperly configured, exiting.")
-            sys.exit()
+        pub_topics = config.initFromConfig('MQTT_PUBLISH_TOPIC').split()
+        self.sub_topics = sub_topics
+        self.pub_topics = pub_topics
 
     def on_message(self, client, userdata, msg):
         decoded_msg = zlib.decompress(base64.b64decode(msg.payload.decode('latin-1'))).decode('latin-1')
