@@ -2,6 +2,7 @@ import time
 import os
 import json
 import dgl
+import sqlite3
 import networkx as nx
 from collections import defaultdict
 
@@ -21,12 +22,12 @@ def one_hot_encode(idx, len):
 """
 This class represents an internal graph of Nodes and Edges
 """
-class Flake():
-    def __init__(self, id, actions):
+class Snowflake():
+    def __init__(self, id):
         # graph id
         self.id = id
         # descriptive list of the actions performed
-        self.actions = actions
+        self.actions = ""
         # node serial to Node object
         self.nodes = defaultdict()
         # edge serial to Edge object
@@ -150,6 +151,11 @@ class Flake():
             output_dict[str_schema] = (src_dst[0], src_dst[1])
         return output_dict
 
+    def add_action(self, action):
+        if self.actions != "":
+            self.actions += ", "
+        self.actions += action
+
     def add_node(self, type):
         id = len(self.nodes)
         self.nodes[id] = node.Node(type, id)
@@ -181,8 +187,8 @@ class Flake():
             self.nodes[dst_node].id()))
         return id
 
-    def save_to_disk(self, db):
-        start = time.time()
+    def save_to_disk(self, db_file):
+        db = sqlite3.connect(db_file)
         print("Saving flake to database...")
         cursor = db.cursor()
         for type in self.nodetypes.keys():
@@ -192,9 +198,8 @@ class Flake():
             sql = queries.insert_type(type)
             cursor.execute(sql)
         db.commit()
-        print("type: " + str(time.time() - start))
+        print("graph ID: " + str(self.id))
 
-        start = time.time()
         edgefeatures = []
         #cursor.execute("BEGIN TRANSACTION;")
         for edge in self.edges:
@@ -205,7 +210,6 @@ class Flake():
             cursor.execute(sql)
             cursor.execute(queries.get_last_row_id())
             src_node_id = cursor.fetchone()[0]
-
             sql = queries.get_type_index(self.edges[edge].getDstNode().getType())
             cursor.execute(sql)
             dst_node_type_id = cursor.fetchone()[0]
@@ -213,9 +217,6 @@ class Flake():
             cursor.execute(sql)
             cursor.execute(queries.get_last_row_id())
             dst_node_id = cursor.fetchone()[0]
-
-            start = time.time()
-
             sql = queries.get_type_index(self.edges[edge].getType())
             cursor.execute(sql)
             edge_type_id = cursor.fetchone()[0]
@@ -226,7 +227,6 @@ class Flake():
                 dst_node_id,
                 self.edges[edge].getJiffies())
             cursor.execute(sql)
-        print("edges: " + str(time.time()-start))
         db.commit()
         cursor.close()
         print("Graph {} saved.".format(self.id))

@@ -4,16 +4,16 @@ import sys
 import time
 
 from collections import defaultdict
-import flake.src.flake.filters.filter as filter
+from flurryflake.filters.filter import Filter
 
 master_node_dict = defaultdict()
 
-class W3CFilter(filter.Filter):
+class W3CFilter(Filter):
     """
     Initialize the filter.
     """
     def __init__(self):
-        filter.Filter.__init__(self)
+        Filter.__init__(self)
 
     def parse_nodes_for_edge(self, prov_type, values):
         src_node = ""

@@ -71,7 +71,7 @@ def flake_to_labeled_networkx_graph(G):
 # serialize the graph with a default path name.
 def flake_to_pickle(G):
     print("converting graph to pickle...")
-    OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+    OUTPUT_DIR = str(os.getcwd()) + "/" + config.initFromConfig('OUTPUT_DIR')
     out = OUTPUT_DIR + "/graph{}/graph{}.gpickle".format(str(G.getIndex()), str(G.getIndex()))
     NG = flake_to_networkx_graph(G)
     nx.write_gpickle(NG, out)
@@ -84,7 +84,7 @@ def flake_to_png(G):
     for edge in G.get_edges():
         reNG.add_edge(edge.getSrcNode().getType(), edge.getDstNode().getType(), label=edge.getType(), data=edge.getType())
     print("Drawing graph...")
-    OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+    OUTPUT_DIR = str(os.getcwd()) + "/" + config.initFromConfig('OUTPUT_DIR')
     out = OUTPUT_DIR + "/graph{}".format(str(G.getIndex()))
     if not os.path.exists(out):
         os.makedirs(out)
@@ -101,7 +101,7 @@ def encoded_node_types(G):
     types = list(G.nodetypes.keys())
     for node in G.nodes:
         type_dict[G.nodes[node].id()] = one_hot_encode(types.index(G.nodes[node].getType()), len(types))
-    OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+    OUTPUT_DIR = str(os.getcwd()) + "/" + config.initFromConfig('OUTPUT_DIR')
     out = OUTPUT_DIR + "/graph{}".format(str(G.getIndex()))
     if not os.path.exists(out):
         os.makedirs(out)
@@ -120,7 +120,7 @@ def encoded_edge_types(G):
     for edge in G.edges:
         type_dict[G.edges[edge].id()] = one_hot_encode(types.index(G.edges[edge].getType()), len(types))
 
-    OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+    OUTPUT_DIR = str(os.getcwd()) + "/" + config.initFromConfig('OUTPUT_DIR')
     out = OUTPUT_DIR + "/graph{}".format(str(G.getIndex()))
     if not os.path.exists(out):
         os.makedirs(out)
@@ -138,7 +138,7 @@ def flake_to_dictionary(G):
 def flake_to_json(G):
     print("outputting graph to JSON format...")
     output_dict = G.get_graph_dictionary()
-    OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+    OUTPUT_DIR = str(os.getcwd()) + "/" + config.initFromConfig('OUTPUT_DIR')
     out = OUTPUT_DIR + "/graph{}".format(str(G.getIndex()))
     if not os.path.exists(out):
         os.makedirs(out)
@@ -149,7 +149,7 @@ def flake_to_json(G):
 
 # print graph info to a file
 def flake_info_to_file(G):
-    OUTPUT_DIR = config.initFromConfig('OUTPUT_DIR')
+    OUTPUT_DIR = str(os.getcwd()) + "/" + config.initFromConfig('OUTPUT_DIR')
     out = OUTPUT_DIR + "/graph{}".format(str(G.getIndex()))
     if not os.path.exists(out):
         os.makedirs(out)

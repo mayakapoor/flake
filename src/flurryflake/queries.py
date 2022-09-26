@@ -22,7 +22,7 @@ def create_graph_table():
     sql = """
         CREATE TABLE IF NOT EXISTS Graphs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        actions TEXT NOT NULL
+        action TEXT NOT NULL
         );
         """
     return sql
@@ -36,7 +36,7 @@ def get_type_index(type):
 
 def insert_type(new_type):
     sql = """
-        REPLACE INTO Types (type) VALUES ("{}");
+        INSERT OR IGNORE INTO Types (type) VALUES ("{}");
         """.format(new_type)
     return sql
 
@@ -76,10 +76,10 @@ def get_last_row_id():
         """
     return sql
 
-def insert_graph(actions):
+def insert_graph(action):
     sql = """
-        INSERT INTO Graphs (actions) VALUES ("{}");
-        """.format(actions)
+        INSERT INTO Graphs (action) VALUES ("{}");
+        """.format(action)
     return sql
 
 def get_next_graph_id():
