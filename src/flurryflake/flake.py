@@ -26,6 +26,8 @@ class Snowflake():
     def __init__(self, id):
         # graph id
         self.id = id
+        # identifies data source
+        self.source = ""
         # descriptive list of the actions performed
         self.actions = ""
         # node serial to Node object
@@ -156,6 +158,11 @@ class Snowflake():
             self.actions += ", "
         self.actions += action
 
+    def add_source(self, source):
+        if self.source != "":
+            self.source += ", "
+        self.source += source
+
     def add_node(self, type):
         id = len(self.nodes)
         self.nodes[id] = node.Node(type, id)
@@ -242,20 +249,26 @@ class Snowflake():
 #    Output functions    #
 ##########################
 
-    def print_info(self):
-        print("Statistics for graph: " + str(self.id))
-        print("Actions taken: " + str(",".join(self.getActions())))
-        print("number of nodes: " + str(self.num_nodes()))
-        print("number of node types: " + str(self.num_node_types()))
+    def manifest(self):
+        manifesto = ""
+        manifesto += ("Statistics for graph: " + str(self.id) + "\n")
+        manifesto += ("Graph ID: " + str(self.source) + "\n")
+        manifesto += ("Actions taken: " + str(",".join(self.getActions())) + "\n")
+        manifesto += ("number of nodes: " + str(self.num_nodes()) + "\n")
+        manifesto += ("number of node types: " + str(self.num_node_types()) + "\n")
         for type in self.nodetypes:
-            print(type + " - " + str(len(self.nodetypes[type])))
-        print("number of edges: " + str(self.num_edges()))
-        print("number of edge types: " + str(self.num_edge_types()))
+            manifesto += (str(type) + " - " + str(len(self.nodetypes[type])) + "\n")
+        manifesto += ("number of edges: " + str(self.num_edges()) + "\n")
+        manifesto += ("number of edge types: " + str(self.num_edge_types()) + "\n")
         for type in self.edgetypes:
-            print(type + " - " + str(len(self.edgetypes[type])))
-        print("number of distinct edge schemas: " + str(self.num_schemas()))
+            manifesto += (str(type) + " - " + str(len(self.edgetypes[type])) + "\n")
+        manifesto += ("number of distinct edge schemas: " + str(self.num_schemas()) + "\n")
         for schema in self.get_schemas():
-            print(schema)
+            manifesto += (str(schema) + "\n")
+        return manifesto
+
+    def print(self):
+        print(self.manifest())
 
     def to_networkx_graph(self):
         print("Making NetworkX Graph...")
@@ -294,38 +307,29 @@ class Snowflake():
         return self.get_graph_dictionary()
 
     def to_json(self):
+        return json.dumps(self.get_graph_dictionary(), indent=4)
+
+    def to_json_file(self):
         print("outputting graph to JSON format...")
         output_dict = self.get_graph_dictionary()
         OUTPUT_DIR = cfg.initFromConfig('OUTPUT_DIR')
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)
-        out += "/graph{}.json".format(str(self.getIndex()), str(self.getIndex()))
+        out += "/graph{}.json".format(str(self.getIndex()))
         with open(f'{out}', 'w') as f:
             json.dump(output_dict, f)
         print("Graph outputted to " + out + ".")
 
-    def to_file(self):
+    def to_stat_file(self):
         OUTPUT_DIR = cfg.initFromConfig('OUTPUT_DIR')
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)
-        out += "/stats{}.txt".format(str(self.getIndex()), str(self.getIndex()))
+        out += "/stats{}.txt".format(str(self.getIndex()))
         with open(f'{out}', 'w') as f:
-            f.write("Statistics for graph: " + str(self.getIndex()) + "\n")
-            f.write("Actions taken: " + ",".join(self.getActions()) + "\n")
-            f.write("number of nodes: " + str(self.num_nodes()) + "\n")
-            f.write("number of node types: " + str(self.num_node_types()) + "\n")
-            for type in self.nodetypes:
-                f.write(type + " - " + str(len(self.nodetypes[type])) + "\n")
-            f.write("number of edges: " + str(self.num_edges()) + "\n")
-            f.write("number of edge types: " + str(self.num_edge_types()) + "\n")
-            for type in self.edgetypes:
-                f.write(type + " - " + str(len(self.edgetypes[type])) + "\n")
-            f.write("number of distinct edge schemas: " + str(self.num_schemas()) + "\n")
-            for schema in self.get_schemas():
-                str_schema = '-'.join(schema)
-                f.write(str(str_schema) + " - " + str(len(self.schemas[schema])) + "\n")
+            f.write(self.manifest())
+        print("Stats outputted to " + out + ".")
 
     def to_pickle(self):
         print("converting graph to pickle...")
@@ -333,7 +337,7 @@ class Snowflake():
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)
-        out += "/graph{}.gpickle".format(str(self.getIndex()), str(self.getIndex()))
+        out += "/graph{}.gpickle".format(str(self.getIndex()))
         NG = self.to_networkx_graph()
         nx.write_gpickle(NG, out)
         print("Graph pickle outputted to " + out + ".")
@@ -362,7 +366,7 @@ class Snowflake():
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)
-        out += "/edgetypes{}.json".format(str(self.getIndex()), str(self.getIndex()))
+        out += "/edgetypes{}.json".format(str(self.getIndex()))
         with open(f'{out}', 'w') as f:
             f.write(str(types))
             json.dump(self.get_edges_encoded(), f, indent=2)
@@ -375,7 +379,7 @@ class Snowflake():
         out = OUTPUT_DIR + "/graph{}".format(str(self.getIndex()))
         if not os.path.exists(out):
             os.makedirs(out)
-        out += "/nodetypes{}.json".format(str(self.getIndex()), str(self.getIndex()))
+        out += "/nodetypes{}.json".format(str(self.getIndex()))
         with open(f'{out}', 'w') as f:
             f.write(str(types))
             json.dump(self.get_nodes_encoded(), f, indent=2)
